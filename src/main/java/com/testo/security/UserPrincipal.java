@@ -1,0 +1,106 @@
+package com.testo.security;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.testo.model.role.Role;
+import com.testo.model.user.User;
+
+public class UserPrincipal implements UserDetails {
+	private static final long serialVersionUID = 1L;
+
+	private Long id;
+	private String firstName;
+	private String lastName;
+	private String username;
+	@JsonIgnore
+	private String email;
+	@JsonIgnore
+	private String password;
+	private Collection<? extends GrantedAuthority> authorities;
+
+	public UserPrincipal(Long id, String firstName, String lastName, String username, String email, String password,
+			Collection<? extends GrantedAuthority> authorities) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.username = username;
+		this.email = email;
+		this.password = password;
+
+		if (authorities == null) {
+			this.authorities = null;
+		} else {
+			this.authorities = new ArrayList<>(authorities);
+		}
+	}
+
+	public static UserPrincipal create(User user) {
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		for (Role role : user.getRoles()) {
+			authorities.add(new SimpleGrantedAuthority(role.getName().name()));
+		}
+
+		return new UserPrincipal(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
+				user.getEmail(), user.getPassword(), authorities);
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return (authorities == null ? null : new ArrayList<>(authorities));
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+}
