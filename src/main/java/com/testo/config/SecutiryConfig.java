@@ -44,9 +44,15 @@ public class SecutiryConfig {
 				.authorizeHttpRequests().requestMatchers(HttpMethod.GET, "/api/**").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/**").permitAll().requestMatchers(HttpMethod.PUT, "/api/**")
 				.permitAll().requestMatchers(HttpMethod.DELETE, "/api/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/v1/**").permitAll().requestMatchers(HttpMethod.GET, "/v3/**")
+				.permitAll().requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll().requestMatchers(HttpMethod.GET,
 						"/api/users/checkUsernameAvailability", "/api/users/checkEmailAvailability")
 				.permitAll().anyRequest().authenticated();
+
+		http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
+		// .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
 
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
@@ -70,4 +76,5 @@ public class SecutiryConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
 }

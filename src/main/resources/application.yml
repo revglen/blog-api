@@ -14,7 +14,25 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
     time-zone: UTC
+    
+server:
+  ssl:
+    key-store: classpath:springboot.p12
+    key-store-password: password
+    key-store-type: pkcs12
+    key-alias: springboot
+    key-password: password
+  port: 8443
+#  servlet:
+#    context-path: "/${spring.application.api-version}"
   
+#springdoc:
+#  swagger-ui:
+#    tagsSorter: alpha
+#    operations-sorter: alpha
+#    doc-expansion: none
+#    disable-swagger-default-url: true
+      
 app:
   jwtSecret: secret
   jwtExpirationInMs: 3600000
